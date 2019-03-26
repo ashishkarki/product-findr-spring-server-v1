@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.karki.ashish.productfindr.dao.ProductDAO;
 import com.karki.ashish.productfindr.entity.Product;
 import com.karki.ashish.productfindr.error.ProductErrorResponse;
 import com.karki.ashish.productfindr.error.ProductNotFoundException;
@@ -21,6 +23,9 @@ import com.karki.ashish.productfindr.error.ProductNotFoundException;
 @RestController
 @RequestMapping("/api")
 public class ProductFindrRestController {
+	@Autowired
+	ProductDAO productDAO;
+	
 	private List<Product> products = new ArrayList<Product>();
 
 	@PostConstruct
@@ -40,8 +45,8 @@ public class ProductFindrRestController {
 
 	@GetMapping("/products")
 	public List<Product> getAllProducts() {
-
-		return this.products;
+		return productDAO.getAllProducts();
+		// return this.products;
 	}
 
 	// endpoint to retrieve particular product

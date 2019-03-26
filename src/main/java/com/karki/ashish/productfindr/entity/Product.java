@@ -8,36 +8,36 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="products")
+@Table(name = "products")
 public class Product {
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private int id;
-	
-	@Column(name="description")
+
+	@Column(name = "description")
 	private String description;
-	
-	@Column(name="lastSold")
+
+	@Column(name = "lastSold")
 	private String lastSold;
-	
-	@Column(name="shelfLife")
+
+	@Column(name = "shelfLife")
 	private String shelfLife;
-	
-	@Column(name="department")
+
+	@Column(name = "department")
 	private String department;
-	
-	@Column(name="price")
+
+	@Column(name = "price")
 	private String price;
-	
-	@Column(name="unit")
+
+	@Column(name = "unit")
 	private String unit;
-	
-	@Column(name="xFor")
+
+	@Column(name = "xFor")
 	private int xFor;
-	
-	@Column(name="cost")
+
+	@Column(name = "cost")
 	private String cost;
 
 	public Product() {
