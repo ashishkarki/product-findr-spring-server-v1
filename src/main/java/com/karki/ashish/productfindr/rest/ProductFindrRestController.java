@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.karki.ashish.productfindr.dao.ProductDAO;
 import com.karki.ashish.productfindr.entity.Product;
 import com.karki.ashish.productfindr.error.ProductErrorResponse;
 import com.karki.ashish.productfindr.error.ProductNotFoundException;
+import com.karki.ashish.productfindr.service.ProductService;
 
 // @CrossOrigin(methods= {})
 @RestController
 @RequestMapping("/api")
 public class ProductFindrRestController {
 	@Autowired
-	ProductDAO productDAO;
+	ProductService productService;
 	
 	private List<Product> products = new ArrayList<Product>();
 
@@ -45,19 +45,19 @@ public class ProductFindrRestController {
 
 	@GetMapping("/products")
 	public List<Product> getAllProducts() {
-		return productDAO.getAllProducts();
-		// return this.products;
+		return productService.getAllProducts();
 	}
 
 	// endpoint to retrieve particular product
 	@GetMapping("/products/{productId}")
-	public Product getProduct(@PathVariable int productId) {
+	public List<Product> getProduct(@PathVariable int productId) {
 		// quick error check
-		if (productId >= products.size() || productId < 0) {
+		if (productId < 0) {
 			throw new ProductNotFoundException("Product ID not found - " + productId);
 		}
 
-		return products.get(productId); // keep it simple for now
+		// return products.get(productId); // keep it simple for now
+		return productService.getSearchedProducts(productId + "");
 	}
 
 	@ExceptionHandler

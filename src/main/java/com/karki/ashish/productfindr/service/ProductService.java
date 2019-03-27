@@ -1,10 +1,9 @@
-package com.karki.ashish.productfindr.dao;
+package com.karki.ashish.productfindr.service;
 
 import java.util.List;
-
 import com.karki.ashish.productfindr.entity.Product;
 
-public interface ProductDAO {
+public interface ProductService {
 	public List<Product> getAllProducts();
 	
 	public List<Product> getSearchedProducts(String searchString);
