@@ -25,7 +25,7 @@ import com.karki.ashish.productfindr.service.ProductService;
 public class ProductFindrRestController {
 	@Autowired
 	ProductService productService;
-	
+
 	private List<Product> products = new ArrayList<Product>();
 
 	@PostConstruct
@@ -50,9 +50,9 @@ public class ProductFindrRestController {
 
 	// endpoint to retrieve particular product
 	@GetMapping("/products/{productId}")
-	public List<Product> getProduct(@PathVariable int productId) {
+	public List<Product> getProduct(@PathVariable String productId) {
 		// quick error check
-		if (productId < 0) {
+		if (productId.length() == 0) {
 			throw new ProductNotFoundException("Product ID not found - " + productId);
 		}
 
@@ -69,7 +69,7 @@ public class ProductFindrRestController {
 
 		return new ResponseEntity<ProductErrorResponse>(errorResponse, HttpStatus.NOT_FOUND);
 	}
-	
+
 	// catch all exception handling
 	@ExceptionHandler
 	public ResponseEntity<ProductErrorResponse> handleException(Exception e) {
@@ -77,7 +77,7 @@ public class ProductFindrRestController {
 		errorResponse.setMessage(e.getMessage());
 		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
 		errorResponse.setTimestamp(System.currentTimeMillis());
-		
+
 		return new ResponseEntity<ProductErrorResponse>(errorResponse, HttpStatus.BAD_REQUEST);
 	}
 }
