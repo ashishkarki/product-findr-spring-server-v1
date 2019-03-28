@@ -40,10 +40,6 @@ public class ProuctDAOImpl implements ProductDAO {
 	public List<Product> getSearchedProducts(String searchString) {
 		Session currentSession = sessionFactory.getCurrentSession();
 
-//		String hqlString = "FROM Product p WHERE p.id=:productId";
-//		Query<Product> searchQuery = currentSession.createQuery("FROM Product p WHERE p.id=:productId", Product.class);
-//		searchQuery.setParameter("productId", searchString);
-
 		CriteriaBuilder criteriaBuilder = currentSession.getCriteriaBuilder();
 		CriteriaQuery<Product> criteria = criteriaBuilder.createQuery(Product.class);
 		Root<Product> root = criteria.from(Product.class);
@@ -57,17 +53,21 @@ public class ProuctDAOImpl implements ProductDAO {
 					);
 		} else {
 			restrictions = criteriaBuilder.or(
-						criteriaBuilder.like(root.get("description"), searchString),
-						criteriaBuilder.like(root.get("lastSold"), searchString),
-						criteriaBuilder.like(root.get("shelfLife"), searchString),
-						criteriaBuilder.like(root.get("department"), searchString),
-						criteriaBuilder.like(root.get("price"), searchString),
-						criteriaBuilder.like(root.get("unit"), searchString),
-						criteriaBuilder.like(root.get("cost"), searchString)
+						criteriaBuilder.like(root.get("description"), "%" + searchString + "%"),
+						criteriaBuilder.like(root.get("lastSold"), "%" + searchString + "%"),
+						criteriaBuilder.like(root.get("shelfLife"), "%" + searchString + "%"),
+						criteriaBuilder.like(root.get("department"), "%" + searchString + "%"),
+						criteriaBuilder.like(root.get("price"), "%" + searchString + "%"),
+						criteriaBuilder.like(root.get("unit"), "%" + searchString + "%"),
+						criteriaBuilder.like(root.get("cost"), "%" + searchString + "%")
 					);
 		}
 
 		criteria.where(restrictions);
+		
+		// JUST A DEMO, WE CAN ALSO USE NATIVE QUERY LIKE THIS
+//		final String nativeSqlString = "select * from products product0_ where product0_.price like '%"+ searchString + "%' or product0_.cost like '%\"+ searchString + \"%'";
+//		Query<Product> query = currentSession.createNativeQuery(nativeSqlString, Product.class);
 
 		Query<Product> query = currentSession.createQuery(criteria);
 		List<Product> results = query.getResultList();

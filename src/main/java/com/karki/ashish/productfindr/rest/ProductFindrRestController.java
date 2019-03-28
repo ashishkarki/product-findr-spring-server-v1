@@ -49,15 +49,15 @@ public class ProductFindrRestController {
 	}
 
 	// endpoint to retrieve particular product
-	@GetMapping("/products/{productId}")
-	public List<Product> getProduct(@PathVariable String productId) {
+	@GetMapping("/products/{searchString:.+}")
+	public List<Product> getProduct(@PathVariable String searchString) {
 		// quick error check
-		if (productId.length() == 0) {
-			throw new ProductNotFoundException("Product ID not found - " + productId);
+		if (searchString.length() == 0) {
+			throw new ProductNotFoundException("Product ID not found - " + searchString);
 		}
 
 		// return products.get(productId); // keep it simple for now
-		return productService.getSearchedProducts(productId + "");
+		return productService.getSearchedProducts(searchString);
 	}
 
 	@ExceptionHandler
