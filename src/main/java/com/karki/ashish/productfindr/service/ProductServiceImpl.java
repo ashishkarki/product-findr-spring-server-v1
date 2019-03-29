@@ -26,4 +26,16 @@ public class ProductServiceImpl implements ProductService {
 	public List<Product> getSearchedProducts(String searchString) {
 		return productDAO.getSearchedProducts(searchString);
 	}
+
+	@Override
+	@Transactional
+	public void saveProduct(Product savedProduct) {
+		productDAO.saveProduct(savedProduct);
+	}
+	
+	@Override
+	@Transactional
+	public void deleteProduct(int deletedProductId) {
+		productDAO.deleteProduct(deletedProductId);
+	}
 }

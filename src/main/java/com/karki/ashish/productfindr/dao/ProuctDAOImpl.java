@@ -7,12 +7,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.LogicalExpression;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -47,24 +43,20 @@ public class ProuctDAOImpl implements ProductDAO {
 
 		Predicate restrictions;
 		if (searchString.matches("\\d+")) {
-			restrictions = criteriaBuilder.or(
-						criteriaBuilder.equal(root.get("id"), Integer.parseInt(searchString)),
-						criteriaBuilder.equal(root.get("xFor"), Integer.parseInt(searchString))
-					);
+			restrictions = criteriaBuilder.or(criteriaBuilder.equal(root.get("id"), Integer.parseInt(searchString)),
+					criteriaBuilder.equal(root.get("xFor"), Integer.parseInt(searchString)));
 		} else {
-			restrictions = criteriaBuilder.or(
-						criteriaBuilder.like(root.get("description"), "%" + searchString + "%"),
-						criteriaBuilder.like(root.get("lastSold"), "%" + searchString + "%"),
-						criteriaBuilder.like(root.get("shelfLife"), "%" + searchString + "%"),
-						criteriaBuilder.like(root.get("department"), "%" + searchString + "%"),
-						criteriaBuilder.like(root.get("price"), "%" + searchString + "%"),
-						criteriaBuilder.like(root.get("unit"), "%" + searchString + "%"),
-						criteriaBuilder.like(root.get("cost"), "%" + searchString + "%")
-					);
+			restrictions = criteriaBuilder.or(criteriaBuilder.like(root.get("description"), "%" + searchString + "%"),
+					criteriaBuilder.like(root.get("lastSold"), "%" + searchString + "%"),
+					criteriaBuilder.like(root.get("shelfLife"), "%" + searchString + "%"),
+					criteriaBuilder.like(root.get("department"), "%" + searchString + "%"),
+					criteriaBuilder.like(root.get("price"), "%" + searchString + "%"),
+					criteriaBuilder.like(root.get("unit"), "%" + searchString + "%"),
+					criteriaBuilder.like(root.get("cost"), "%" + searchString + "%"));
 		}
 
 		criteria.where(restrictions);
-		
+
 		// JUST A DEMO, WE CAN ALSO USE NATIVE QUERY LIKE THIS
 //		final String nativeSqlString = "select * from products product0_ where product0_.price like '%"+ searchString + "%' or product0_.cost like '%\"+ searchString + \"%'";
 //		Query<Product> query = currentSession.createNativeQuery(nativeSqlString, Product.class);
@@ -73,6 +65,24 @@ public class ProuctDAOImpl implements ProductDAO {
 		List<Product> results = query.getResultList();
 
 		return results;
+	}
+
+	@Override
+	public void saveProduct(Product savedProduct) {
+		Session currentSession = sessionFactory.getCurrentSession();
+
+		currentSession.saveOrUpdate(savedProduct);
+	}
+
+	@Override
+	public void deleteProduct(int deletedProductId) {
+		Session currentSession = sessionFactory.getCurrentSession();
+
+		@SuppressWarnings("rawtypes")
+		Query deletionQuery = currentSession.createQuery("delete from Product where id=:Id");
+		deletionQuery.setParameter("Id", deletedProductId);
+
+		deletionQuery.executeUpdate();
 	}
 
 }
