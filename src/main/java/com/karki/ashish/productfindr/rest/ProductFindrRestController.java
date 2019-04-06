@@ -5,18 +5,27 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.karki.ashish.productfindr.entity.Product;
 import com.karki.ashish.productfindr.error.ProductNotFoundException;
+import com.karki.ashish.productfindr.service.ProductService;
 
 // @CrossOrigin(methods= {})
 @RestController
 @RequestMapping("/api")
 public class ProductFindrRestController {
+	@Autowired
+	ProductService productService;
+
 	private List<Product> products = new ArrayList<Product>();
 
 	@PostConstruct
@@ -36,18 +45,60 @@ public class ProductFindrRestController {
 
 	@GetMapping("/products")
 	public List<Product> getAllProducts() {
-
-		return this.products;
+		return productService.getAllProducts();
 	}
 
 	// endpoint to retrieve particular product
-	@GetMapping("/products/{productId}")
-	public Product getProduct(@PathVariable int productId) {
+	@GetMapping("/products/{searchString:.+}")
+	public List<Product> getProduct(@PathVariable String searchString) {
 		// quick error check
-		if (productId >= products.size() || productId < 0) {
-			throw new ProductNotFoundException("Product ID not found - " + productId);
+		if (searchString.length() == 0) {
+			throw new ProductNotFoundException("Product ID not found - " + searchString);
 		}
 
-		return products.get(productId); // keep it simple for now
+		final List<Product> resultList = productService.getSearchedProducts(searchString);
+
+		if (resultList == null || resultList.size() == 0) {
+			throw new ProductNotFoundException("No Products meet search criteria - " + searchString);
+		}
+
+		return resultList;
+	}
+
+	@PostMapping("/products")
+	public Product saveProduct(@RequestBody Product savedProduct) {
+		/*
+		 * Also set the ID field to zero so that (if it is set in the body) we force
+		 * hibernate to execute an insert instead of an update
+		 */
+		savedProduct.setId(0);
+
+		productService.saveProduct(savedProduct);
+
+		return savedProduct;
+	}
+
+	@PutMapping("/products")
+	public Product updateProduct(@RequestBody Product updatedProduct) {
+		/*
+		 * we don't set the Id to 0 here and let whatever id from body to pass, so
+		 * hibernate performs an update
+		 */
+		productService.saveProduct(updatedProduct);
+
+		return updatedProduct;
+	}
+
+	@DeleteMapping("/products/{deletedProductId}")
+	public String deleteProduct(@PathVariable int deletedProductId) {
+		// some error checking before deleting
+		List<Product> tempProduct = productService.getSearchedProducts(deletedProductId + ""); // we get only one thing based on unique ID
+		if(null == tempProduct || tempProduct.size() == 0) {
+			throw new ProductNotFoundException("Product with this ID not found - " + deletedProductId);
+		}
+		
+		productService.deleteProduct(deletedProductId);
+		
+		return "Deleted Product Id - " + deletedProductId;
 	}
 }

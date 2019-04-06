@@ -1,14 +1,43 @@
 package com.karki.ashish.productfindr.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "products")
 public class Product {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private int id;
+
+	@Column(name = "description")
 	private String description;
+
+	@Column(name = "lastSold")
 	private String lastSold;
+
+	@Column(name = "shelfLife")
 	private String shelfLife;
+
+	@Column(name = "department")
 	private String department;
+
+	@Column(name = "price")
 	private String price;
+
+	@Column(name = "unit")
 	private String unit;
+
+	@Column(name = "xFor")
 	private int xFor;
+
+	@Column(name = "cost")
 	private String cost;
 
 	public Product() {
